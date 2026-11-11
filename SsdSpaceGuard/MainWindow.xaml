@@ -1,0 +1,324 @@
+<Window x:Class="SsdSpaceGuard.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="SSD Space Guard — Generic Windows OS Drive &amp; AppData Manager (.NET 9)"
+        Width="1360" Height="860" MinWidth="1050" MinHeight="680"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgPrimary}"
+        Foreground="{StaticResource TextPrimary}">
+
+    <Grid Margin="14">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="135"/>
+        </Grid.RowDefinitions>
+
+        <!-- ROW 0: Header + Global Settings Bar -->
+        <Border Grid.Row="0" Background="{StaticResource BgCard}" CornerRadius="8" Padding="14,10" Margin="0,0,0,10" BorderBrush="{StaticResource BorderBrushDark}" BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="SSD Space Guard" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBlue}"/>
+                    <TextBlock x:Name="SubtitleText" Text="Universal Windows OS SSD Cleaner, NTFS Junction Offloader &amp; Virtual Disk Manager"
+                               FontSize="12" Foreground="{StaticResource TextSecondary}" Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <WrapPanel Grid.Column="1" VerticalAlignment="Center" ItemHeight="34">
+                    <TextBlock Text="Target Offload Drive:" VerticalAlignment="Center" Foreground="{StaticResource TextSecondary}" Margin="0,0,6,0"/>
+                    <ComboBox x:Name="TargetDriveCombo" Width="250" VerticalContentAlignment="Center" Margin="0,0,12,0"
+                              DisplayMemberPath="DisplayTitle" SelectionChanged="TargetDriveCombo_SelectionChanged"/>
+
+                    <TextBlock Text="Offload Folder:" VerticalAlignment="Center" Foreground="{StaticResource TextSecondary}" Margin="0,0,6,0"/>
+                    <TextBox x:Name="OffloadRootTextBox" Width="170" VerticalContentAlignment="Center" Background="#0F172A" Foreground="White"
+                             BorderBrush="#475569" Padding="6,2" Margin="0,0,12,0" Text="D:\SSD_Offload"/>
+
+                    <TextBlock Text="Min Size (MB):" VerticalAlignment="Center" Foreground="{StaticResource TextSecondary}" Margin="0,0,6,0"/>
+                    <TextBox x:Name="MinSizeTextBox" Width="58" VerticalContentAlignment="Center" Background="#0F172A" Foreground="White"
+                             BorderBrush="#475569" Padding="6,2" Margin="0,0,12,0" Text="50"/>
+
+                    <Button x:Name="ScanAllButton" Content="Scan / Refresh System" Background="#0284C7" Click="ScanAllButton_Click" Margin="0,0,6,0"/>
+                    <Button x:Name="CancelButton" Content="Cancel" Background="#DC2626" Click="CancelButton_Click" IsEnabled="False"/>
+                </WrapPanel>
+            </Grid>
+        </Border>
+
+        <!-- ROW 1: Live Drive Telemetry Cards -->
+        <ItemsControl Grid.Row="1" x:Name="DrivesItemsControl" Margin="0,0,0,10">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="{StaticResource BgCard}" CornerRadius="8" Padding="12,8" Margin="0,0,8,0"
+                            BorderBrush="{StaticResource BorderBrushDark}" BorderThickness="1">
+                        <StackPanel>
+                            <DockPanel>
+                                <TextBlock Text="{Binding DisplayTitle}" FontWeight="SemiBold" FontSize="12.5" Foreground="White"/>
+                                <TextBlock Text="{Binding UsedPercent, StringFormat={}{0:N1}% Used}" DockPanel.Dock="Right"
+                                           HorizontalAlignment="Right" Foreground="{StaticResource AccentBlue}" FontWeight="Bold" FontSize="12"/>
+                            </DockPanel>
+                            <ProgressBar Minimum="0" Maximum="100" Value="{Binding UsedPercent, Mode=OneWay}" Height="8" Margin="0,6,0,4"
+                                         Background="#0F172A" Foreground="#38BDF8" BorderThickness="0"/>
+                            <TextBlock FontSize="11" Foreground="{StaticResource TextSecondary}">
+                                <Run Text="Used: "/><Run Text="{Binding UsedGB, Mode=OneWay, StringFormat={}{0:N2} GB}"/>
+                                <Run Text="  |  Free: "/><Run Text="{Binding FreeGB, Mode=OneWay, StringFormat={}{0:N2} GB}" Foreground="#22C55E" FontWeight="SemiBold"/>
+                                <Run Text="  |  Format: "/><Run Text="{Binding DriveFormat, Mode=OneWay}"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- ROW 2: Main Functional Tabs -->
+        <TabControl Grid.Row="2" Background="{StaticResource BgCard}" BorderBrush="{StaticResource BorderBrushDark}" Padding="8">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Background" Value="#1E293B"/>
+                    <Setter Property="Foreground" Value="#CBD5E1"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="FontSize" Value="13"/>
+                    <Setter Property="Padding" Value="14,8"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border x:Name="Border" Background="#1E293B" CornerRadius="6,6,0,0" Margin="0,0,4,0" Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter x:Name="ContentSite" ContentSource="Header"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Border" Property="Background" Value="#0284C7"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+
+            <!-- TAB 1: Storage Analyzer & NTFS Junction Offloader -->
+            <TabItem Header="1. Storage Analyzer &amp; NTFS Junction Offloader">
+                <Grid Margin="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" Margin="0,0,0,8">
+                        <WrapPanel DockPanel.Dock="Left" VerticalAlignment="Center">
+                            <TextBlock Text="Scope:" VerticalAlignment="Center" Foreground="{StaticResource TextSecondary}" Margin="0,0,6,0"/>
+                            <ComboBox x:Name="ScopeFilterCombo" Width="175" SelectedIndex="0" SelectionChanged="ScopeFilterCombo_SelectionChanged" Margin="0,0,10,0">
+                                <ComboBoxItem Content="All Scanned Locations"/>
+                                <ComboBoxItem Content="AppData\Local"/>
+                                <ComboBoxItem Content="AppData\Local\Programs"/>
+                                <ComboBoxItem Content="AppData\Local\Packages"/>
+                                <ComboBoxItem Content="AppData\Roaming"/>
+                                <ComboBoxItem Content="UserProfile"/>
+                                <ComboBoxItem Content="Custom Folder"/>
+                            </ComboBox>
+
+                            <TextBlock Text="Filter:" VerticalAlignment="Center" Foreground="{StaticResource TextSecondary}" Margin="0,0,6,0"/>
+                            <TextBox x:Name="SearchFilterBox" Width="170" VerticalContentAlignment="Center" Background="#0F172A" Foreground="White"
+                                     BorderBrush="#475569" Padding="6,4" Margin="0,0,10,0" TextChanged="SearchFilterBox_TextChanged"/>
+
+                            <Button Content="+ Add Custom Folder..." Background="#334155" Click="AddCustomFolderButton_Click" Margin="0,0,8,0"/>
+                            <Button Content="Select Recommended" Background="#475569" Click="SelectRecommendedFolders_Click" Margin="0,0,8,0"/>
+                            <Button Content="Clear Selection" Background="#475569" Click="ClearFolderSelection_Click" Margin="0,0,8,0"/>
+                        </WrapPanel>
+
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <TextBlock x:Name="FolderSummaryText" VerticalAlignment="Center" Foreground="#38BDF8" FontWeight="SemiBold" Margin="0,0,12,0"
+                                       Text="0 folders"/>
+                            <Button x:Name="BatchOffloadButton" Content="Offload Checked via NTFS Junction" Background="#16A34A"
+                                    Click="BatchOffloadButton_Click"/>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <DataGrid Grid.Row="1" x:Name="FoldersGrid" AutoGenerateColumns="False" CanUserAddRows="False"
+                              Background="#0F172A" RowBackground="#1E293B" AlternatingRowBackground="#172033"
+                              Foreground="White" BorderBrush="#334155" GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#334155" HeadersVisibility="Column" SelectionMode="Single">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#334155"/>
+                                <Setter Property="Foreground" Value="#F8FAFC"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Padding" Value="8,6"/>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="Select" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="55"/>
+                            <DataGridTextColumn Header="Folder Name" Binding="{Binding Name}" IsReadOnly="True" Width="180" FontWeight="SemiBold"/>
+                            <DataGridTextColumn Header="Scope" Binding="{Binding ScopeCategory}" IsReadOnly="True" Width="150"/>
+                            <DataGridTextColumn Header="Size" Binding="{Binding SizeFormatted}" SortMemberPath="SizeBytes" IsReadOnly="True" Width="95" FontWeight="Bold"/>
+                            <DataGridTextColumn Header="Link State" Binding="{Binding LinkBadge}" IsReadOnly="True" Width="210"/>
+                            <DataGridTextColumn Header="Classification" Binding="{Binding ClassificationBadge}" IsReadOnly="True" Width="215"/>
+                            <DataGridTextColumn Header="Guidance / Safety Check" Binding="{Binding RecommendationReason}" IsReadOnly="True" Width="*"/>
+                            <DataGridTemplateColumn Header="Actions" Width="235">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Button Content="Offload ->" Padding="8,3" Margin="2" Background="#16A34A"
+                                                    IsEnabled="{Binding CanOffload}" Click="SingleOffloadButton_Click"/>
+                                            <Button Content="Restore" Padding="8,3" Margin="2" Background="#D97706"
+                                                    IsEnabled="{Binding CanRestore}" Click="SingleRestoreButton_Click"/>
+                                            <Button Content="Open" Padding="8,3" Margin="2" Background="#475569"
+                                                    Click="OpenFolderInExplorer_Click"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 2: Smart Cache Cleaner -->
+            <TabItem Header="2. Smart Cache Cleaner (Safe Auto-Discovery)">
+                <Grid Margin="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" Margin="0,0,0,8">
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
+                            <Button Content="Select All Caches" Background="#475569" Click="SelectAllCaches_Click" Margin="0,0,8,0"/>
+                            <Button Content="Deselect All" Background="#475569" Click="DeselectAllCaches_Click" Margin="0,0,12,0"/>
+                            <TextBlock Text="Note: Browser &amp; IDE cache cleaning removes only transient caches; logins, cookies &amp; settings are untouched."
+                                       VerticalAlignment="Center" Foreground="{StaticResource TextSecondary}" FontSize="12"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                            <TextBlock x:Name="CacheSummaryText" VerticalAlignment="Center" Foreground="#22C55E" FontWeight="Bold" FontSize="13.5" Margin="0,0,14,0"
+                                       Text="Selected Reclaimable: 0 MB"/>
+                            <Button x:Name="PurgeCachesButton" Content="Purge Checked Caches Now" Background="#E11D48"
+                                    Click="PurgeCachesButton_Click"/>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <DataGrid Grid.Row="1" x:Name="CachesGrid" AutoGenerateColumns="False" CanUserAddRows="False"
+                              Background="#0F172A" RowBackground="#1E293B" AlternatingRowBackground="#172033"
+                              Foreground="White" BorderBrush="#334155" GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#334155" HeadersVisibility="Column">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#334155"/>
+                                <Setter Property="Foreground" Value="#F8FAFC"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Padding" Value="8,6"/>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="Clean" Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" Width="60"/>
+                            <DataGridTextColumn Header="Category" Binding="{Binding Category}" IsReadOnly="True" Width="240"/>
+                            <DataGridTextColumn Header="Cache Target" Binding="{Binding Name}" IsReadOnly="True" Width="210" FontWeight="SemiBold"/>
+                            <DataGridTextColumn Header="Reclaimable Size" Binding="{Binding SizeFormatted}" SortMemberPath="SizeBytes" IsReadOnly="True" Width="130" FontWeight="Bold"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True" Width="140"/>
+                            <DataGridTextColumn Header="Description" Binding="{Binding Description}" IsReadOnly="True" Width="280"/>
+                            <DataGridTextColumn Header="Discovered Path(s)" Binding="{Binding PrimaryPathDisplay}" IsReadOnly="True" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 3: WSL2 & Virtual Disks (.vhdx) -->
+            <TabItem Header="3. WSL2 &amp; Virtual Disks (.vhdx)">
+                <Grid Margin="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" Margin="0,0,0,8">
+                        <TextBlock Text="Automatically discovers WSL2 Linux distributions (Ubuntu, Debian, etc.) and Docker/Hyper-V .vhdx virtual disks stored on your OS drive."
+                                   VerticalAlignment="Center" Foreground="{StaticResource TextSecondary}"/>
+                    </DockPanel>
+
+                    <DataGrid Grid.Row="1" x:Name="VhdxGrid" AutoGenerateColumns="False" CanUserAddRows="False"
+                              Background="#0F172A" RowBackground="#1E293B" AlternatingRowBackground="#172033"
+                              Foreground="White" BorderBrush="#334155" GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#334155" HeadersVisibility="Column">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="#334155"/>
+                                <Setter Property="Foreground" Value="#F8FAFC"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Padding" Value="8,6"/>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Distro / Owner" Binding="{Binding DistroOrOwner}" IsReadOnly="True" Width="240" FontWeight="SemiBold"/>
+                            <DataGridTextColumn Header="Virtual Disk File" Binding="{Binding Name}" IsReadOnly="True" Width="140"/>
+                            <DataGridTextColumn Header="Size" Binding="{Binding SizeFormatted}" SortMemberPath="SizeBytes" IsReadOnly="True" Width="110" FontWeight="Bold"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True" Width="180"/>
+                            <DataGridTextColumn Header="Current VHDX Path" Binding="{Binding VhdxPath}" IsReadOnly="True" Width="*"/>
+                            <DataGridTemplateColumn Header="Action" Width="190">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button Content="Relocate to Target Drive" Padding="10,4" Margin="2" Background="#0284C7"
+                                                Click="RelocateVhdxButton_Click"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- TAB 4: Rule Catalog (rules.json) Editor -->
+            <TabItem Header="4. Rule Catalog &amp; Heuristics (rules.json)">
+                <Grid Margin="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <DockPanel Grid.Row="0" Margin="0,0,0,8">
+                        <TextBlock Text="Customize protected OS patterns, browser roots, Electron cache signatures, and offload hints in Config\rules.json:"
+                                   VerticalAlignment="Center" Foreground="{StaticResource TextSecondary}"/>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="Reload Rules from Disk" Background="#475569" Click="ReloadRulesButton_Click" Margin="0,0,8,0"/>
+                            <Button Content="Save &amp; Apply Rules" Background="#16A34A" Click="SaveRulesButton_Click"/>
+                        </StackPanel>
+                    </DockPanel>
+
+                    <TextBox Grid.Row="1" x:Name="RulesJsonEditor" AcceptsReturn="True" AcceptsTab="True"
+                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                             FontFamily="Consolas" FontSize="12.5" Background="#0F172A" Foreground="#E2E8F0"
+                             BorderBrush="#334155" Padding="10"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- ROW 3: Live Progress & Activity Console -->
+        <Border Grid.Row="3" Background="{StaticResource BgCard}" CornerRadius="8" Padding="10" Margin="0,10,0,0"
+                BorderBrush="{StaticResource BorderBrushDark}" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <DockPanel Grid.Row="0" Margin="0,0,0,6">
+                    <TextBlock x:Name="StatusBannerText" Text="Ready." FontWeight="SemiBold" Foreground="#38BDF8" VerticalAlignment="Center"/>
+                    <ProgressBar x:Name="BusyProgressBar" Width="220" Height="8" DockPanel.Dock="Right" HorizontalAlignment="Right"
+                                 IsIndeterminate="False" Visibility="Collapsed" Background="#0F172A" Foreground="#38BDF8"/>
+                </DockPanel>
+
+                <TextBox Grid.Row="1" x:Name="ActivityLogBox" IsReadOnly="True" VerticalScrollBarVisibility="Auto"
+                         TextWrapping="Wrap" FontFamily="Consolas" FontSize="11.5" Background="#0F172A"
+                         Foreground="#CBD5E1" BorderThickness="0" Padding="6"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

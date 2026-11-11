@@ -1,0 +1,197 @@
+{
+  "ProtectedFolderPatterns": [
+    "\\System Volume Information",
+    "\\$Recycle.Bin",
+    "\\Recovery",
+    "\\Boot",
+    "\\EFI",
+    "Microsoft\\Windows",
+    "Microsoft\\WindowsApps",
+    "Microsoft\\Credentials",
+    "Microsoft\\Protect",
+    "Microsoft\\Vault",
+    "Microsoft\\Crypto",
+    "Microsoft\\IdentityService",
+    "Microsoft\\TokenBroker",
+    "Microsoft\\OneDrive",
+    "Microsoft\\Teams\\current",
+    "AppData\\Local\\Packages",
+    "AppData\\Local\\Temp",
+    "ConnectedDevicesPlatform",
+    "Comms",
+    "Publishers",
+    "VirtualStore",
+    "AppData\\LocalLow"
+  ],
+  "KnownCacheSignatures": [
+    {
+      "Category": "Package & Build Cache",
+      "NamePattern": "npm-cache",
+      "Description": "Node.js NPM downloaded package & npx cache",
+      "RecommendJunction": true
+    },
+    {
+      "Category": "Package & Build Cache",
+      "NamePattern": "pip",
+      "SubPath": "cache",
+      "Description": "Python pip downloaded wheel & HTTP cache",
+      "RecommendJunction": true
+    },
+    {
+      "Category": "Package & Build Cache",
+      "NamePattern": "Yarn",
+      "SubPath": "Cache",
+      "Description": "Yarn package manager cache",
+      "RecommendJunction": true
+    },
+    {
+      "Category": "Package & Build Cache",
+      "NamePattern": "pnpm-cache",
+      "Description": "pnpm package cache",
+      "RecommendJunction": true
+    },
+    {
+      "Category": "Package & Build Cache",
+      "NamePattern": "pnpm",
+      "SubPath": "store",
+      "Description": "pnpm content-addressable store",
+      "RecommendJunction": true
+    },
+    {
+      "Category": "Package & Build Cache",
+      "NamePattern": "NuGet",
+      "SubPath": "v3-cache",
+      "Description": "NuGet HTTP v3 cache",
+      "RecommendJunction": true
+    },
+    {
+      "Category": "Package & Build Cache",
+      "NamePattern": "uv",
+      "SubPath": "cache",
+      "Description": "Astral uv Python package cache",
+      "RecommendJunction": true
+    },
+    {
+      "Category": "Package & Build Cache",
+      "NamePattern": "node-gyp",
+      "Description": "Node.js native addon build headers cache",
+      "RecommendJunction": false
+    },
+    {
+      "Category": "Package & Build Cache",
+      "NamePattern": ".cache",
+      "Description": "Universal CLI/AI/HuggingFace/build cache directory",
+      "RecommendJunction": true
+    },
+    {
+      "Category": "Package & Build Cache",
+      "NamePattern": ".gradle",
+      "SubPath": "caches",
+      "Description": "Gradle build system cache",
+      "RecommendJunction": true
+    },
+    {
+      "Category": "System & Diagnostics",
+      "NamePattern": "CrashDumps",
+      "Description": "Windows application crash dump (.dmp) files",
+      "RecommendJunction": false
+    },
+    {
+      "Category": "System & Diagnostics",
+      "NamePattern": "D3DSCache",
+      "Description": "Direct3D compiled shader cache",
+      "RecommendJunction": false
+    },
+    {
+      "Category": "System & Diagnostics",
+      "NamePattern": "SquirrelTemp",
+      "Description": "Squirrel installer temporary staging files",
+      "RecommendJunction": false
+    },
+    {
+      "Category": "Developer Browsers & Runtimes",
+      "NamePattern": "ms-playwright",
+      "Description": "Playwright headless browser binaries",
+      "RecommendJunction": true
+    },
+    {
+      "Category": "Developer Browsers & Runtimes",
+      "NamePattern": "ms-playwright-go",
+      "Description": "Playwright Go browser binaries",
+      "RecommendJunction": true
+    }
+  ],
+  "BrowserRoots": [
+    {
+      "VendorName": "Google Chrome",
+      "RelativeUserDataPath": "Google\\Chrome\\User Data"
+    },
+    {
+      "VendorName": "Microsoft Edge",
+      "RelativeUserDataPath": "Microsoft\\Edge\\User Data"
+    },
+    {
+      "VendorName": "Brave Browser",
+      "RelativeUserDataPath": "BraveSoftware\\Brave-Browser\\User Data"
+    },
+    {
+      "VendorName": "Vivaldi",
+      "RelativeUserDataPath": "Vivaldi\\User Data"
+    },
+    {
+      "VendorName": "Chromium",
+      "RelativeUserDataPath": "Chromium\\User Data"
+    },
+    {
+      "VendorName": "Opera",
+      "RelativeUserDataPath": "Opera Software\\Opera Stable"
+    }
+  ],
+  "ChromiumProfileCacheSubfolders": [
+    "Cache\\Cache_Data",
+    "Code Cache",
+    "GPUCache",
+    "ShaderCache",
+    "DawnCache",
+    "DawnGraphiteCache",
+    "DawnWebGPUCache",
+    "GrShaderCache",
+    "Service Worker\\CacheStorage",
+    "Service Worker\\ScriptCache"
+  ],
+  "ElectronCacheSubfolders": [
+    "Cache\\Cache_Data",
+    "Code Cache",
+    "GPUCache",
+    "DawnCache",
+    "CachedData",
+    "CachedExtensionVSIXs",
+    "Crashpad\\completed"
+  ],
+  "GoodOffloadHints": [
+    "ollama",
+    ".ollama",
+    "claude",
+    "slicer",
+    "openai",
+    "docker",
+    "android",
+    "jetbrains",
+    "unreal",
+    "unity",
+    "blender",
+    "gimp",
+    "pgadmin",
+    ".vscode",
+    ".cursor",
+    "OptGuideOnDeviceModel",
+    "models",
+    "npm-cache",
+    "pip",
+    "ms-playwright",
+    ".cache",
+    ".nuget",
+    ".cargo",
+    ".rustup"
+  ]
+}

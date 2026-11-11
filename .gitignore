@@ -1,0 +1,19 @@
+# .NET Build Artifacts
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio / Rider / VS Code caches
+.vs/
+.idea/
+.vscode/
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# Local test output & temporary backup folders
+selftest_result.txt
+_backup_before_*/
+*.tmp
